@@ -27,25 +27,31 @@ function Home() {
     }, [])
 
 
-    const handleSearch = async(e) => {
-        // e.preventDefault()
-        if(!searchQuery.trim())return 
-        if(loading) return 
-        setLoading(true)
+    const handleSearch = async (e) => {
+    e.preventDefault()
 
-        try{
-            const searchResults = await searchMovies(searchQuery)
+    if (!searchQuery.trim()) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+        const searchResults = await searchMovies(searchQuery)
+
+        if (searchResults.length === 0) {
+            setError("No movies found")
+            setMovies([])
+        } else {
             setMovies(searchResults)
-            setError(null)
-
-        }catch(error){
-            console.log(error)
-            setError("Failed to search movies...")
-
-        }finally{
-            setError(false)
         }
+
+    } catch (err) {
+        console.log(err)
+        setError("Failed to search movies...")
+    } finally {
+        setLoading(false)
     }
+}
 
     return <div className="home">
         <form onSubmit={handleSearch} className="search-form">
